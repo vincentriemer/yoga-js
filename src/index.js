@@ -24,6 +24,7 @@ type NodeStyle = {
 };
 
 type EnumMapping = { [string]: number };
+
 type SetterMap = {
   [propName: string]: (
     node: YGNode,
@@ -32,6 +33,7 @@ type SetterMap = {
     value: any
   ) => boolean,
 };
+
 type NodeEdgeSetter = (edge: YGEnum, value: YGLiteralValue) => void;
 
 const BASE_NODE = Yoga.Node.create();
@@ -311,8 +313,6 @@ class YogaNode {
           } else {
             return false;
           }
-        } else if (property === "layout") {
-          return false;
         } else if (property === "children") {
           if (Array.isArray(value)) {
             Reflect.set(target, property, []);
