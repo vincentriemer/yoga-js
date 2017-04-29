@@ -10,10 +10,10 @@
     "yoga-layout": "^1.2.0"
   },
   "release": {
-    "branch": "develop"
+    "branch": "master"
   },
   "publishConfig": {
-    "tag": "next"
+    "tag": "latest"
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
