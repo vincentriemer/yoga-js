@@ -10,9 +10,9 @@ node_js:
   - '6'
   - '4'
 script:
-  - npm run build
+  - yarn run build
 after_success:
-  - bash scripts/publish.sh
+  - yarn run semantic-release
 branches:
   except:
     - /^v\d+\.\d+\.\d+$/

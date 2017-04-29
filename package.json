@@ -9,6 +9,12 @@
   "peerDependencies": {
     "yoga-layout": "^1.2.0"
   },
+  "release": {
+    "branch": "develop"
+  },
+  "publishConfig": {
+    "tag": "next"
+  },
   "devDependencies": {
     "babel-core": "^6.24.1",
     "babel-plugin-syntax-flow": "^6.18.0",
