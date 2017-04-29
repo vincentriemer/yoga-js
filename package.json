@@ -1,0 +1,53 @@
+{
+  "name": "yoga-js",
+  "version": "0.0.1",
+  "description": "Idiomatic JavaScript API for the Yoga layout engine",
+  "author": "Vincent Riemer",
+  "license": "MIT",
+  "main": "dist/yogajs.cjs.js",
+  "module": "dist/yogajs.js",
+  "peerDependencies": {
+    "yoga-layout": "^1.2.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-plugin-syntax-flow": "^6.18.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-preset-env": "^1.4.0",
+    "flow-bin": "^0.44.2",
+    "flow-typed": "^2.1.1",
+    "npm-run-all": "^4.0.2",
+    "rimraf": "^2.6.1",
+    "rollup": "^0.41.6",
+    "rollup-plugin-babel": "^2.7.1",
+    "yoga-layout": "^1.2.0"
+  },
+  "scripts": {
+    "clean": "rimraf dist",
+    "flow": "flow",
+    "build:es": "rollup -c config/rollup.es.config.js",
+    "build:cjs": "rollup -c config/rollup.cjs.config.js",
+    "build:umd": "rollup -c config/rollup.umd.config.js",
+    "build:flow": "flow gen-flow-files ./src/index.js > ./dist/yogajs.js.flow",
+    "build": "npm-run-all build:{es,cjs,umd,flow}",
+    "prebuild": "yarn run clean"
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "modules": false
+        }
+      ]
+    ],
+    "plugins": [
+      "syntax-flow",
+      "transform-flow-strip-types",
+      "transform-class-properties",
+      "transform-object-rest-spread"
+    ]
+  }
+}
