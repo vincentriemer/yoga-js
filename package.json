@@ -1,6 +1,6 @@
 {
   "name": "yoga-js",
-  "version": "0.0.1",
+  "version": "0.0.0-development",
   "description": "Idiomatic JavaScript API for the Yoga layout engine",
   "author": "Vincent Riemer",
   "license": "MIT",
@@ -16,23 +16,30 @@
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-env": "^1.4.0",
+    "conventional-changelog-lint": "^1.1.9",
+    "cz-conventional-changelog": "^2.0.0",
     "flow-bin": "^0.44.2",
     "flow-typed": "^2.1.1",
+    "husky": "^0.13.3",
     "npm-run-all": "^4.0.2",
     "rimraf": "^2.6.1",
     "rollup": "^0.41.6",
     "rollup-plugin-babel": "^2.7.1",
+    "semantic-release": "^6.3.2",
     "yoga-layout": "^1.2.0"
   },
   "scripts": {
     "clean": "rimraf dist",
+    "commit": "git-cz",
+    "commitmsg": "conventional-changelog-lint -e",
     "flow": "flow",
     "build:es": "rollup -c config/rollup.es.config.js",
     "build:cjs": "rollup -c config/rollup.cjs.config.js",
     "build:umd": "rollup -c config/rollup.umd.config.js",
     "build:flow": "flow gen-flow-files ./src/index.js > ./dist/yogajs.js.flow",
     "build": "npm-run-all build:{es,cjs,umd,flow}",
-    "prebuild": "yarn run clean"
+    "prebuild": "yarn run clean",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "babel": {
     "presets": [
@@ -49,5 +56,14 @@
       "transform-class-properties",
       "transform-object-rest-spread"
     ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vincentriemer/yoga-js.git"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

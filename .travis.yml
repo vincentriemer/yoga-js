@@ -1,0 +1,20 @@
+language: node_js
+cache:
+  yarn: true
+  directories:
+    - node_modules
+notifications:
+  email: false
+node_js:
+  - '7'
+  - '6'
+  - '4'
+script:
+  - npm run build
+after_success:
+  - bash scripts/publish.sh
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/
+deploy:
+  skip_cleanup: true
