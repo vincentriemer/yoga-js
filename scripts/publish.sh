@@ -8,9 +8,8 @@ if [ "$BRANCH" != "$LATEST_BRANCH" ] && [ "$BRANCH" != "$NEXT_BRANCH" ];
 then echo "not a valid publishing branch, skipping..." && exit 1;
 fi
 
-if [ "$PULL_REQUEST" == "false"];
-then (npm run semantic-release && set NPM_PUBLISHED=1)
-|| (echo Unable to publish version && set NPM_PUBLISHED=0);
+if [ "$PULL_REQUEST" == "false"]; then;
+  npm run semantic-release && set NPM_PUBLISHED=1 || echo "Unable to publish version" && set NPM_PUBLISHED=0;
 fi
 
 export PACKAGE_VERSION='cat package.json | jq .version -r'
