@@ -22,6 +22,7 @@
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-preset-env": "^1.4.0",
+    "commitizen": "^2.9.6",
     "conventional-changelog-lint": "^1.1.9",
     "cz-conventional-changelog": "^2.0.0",
     "flow-bin": "^0.44.2",
@@ -61,7 +62,20 @@
       "transform-flow-strip-types",
       "transform-class-properties",
       "transform-object-rest-spread"
-    ]
+    ],
+    "env": {
+      "test": {
+        "presets": [
+          "env"
+        ],
+        "plugins": [
+          "syntax-flow",
+          "transform-flow-strip-types",
+          "transform-class-properties",
+          "transform-object-rest-spread"
+        ]
+      }
+    }
   },
   "repository": {
     "type": "git",

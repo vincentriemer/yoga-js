@@ -1,6 +1,6 @@
 module.exports = function(wallaby) {
   return {
-    files: ["index.js", "YogaNode.js"],
+    files: ["src/index.js", "YogaNode.js"],
     tests: ["test.js"],
     env: {
       type: "node",
