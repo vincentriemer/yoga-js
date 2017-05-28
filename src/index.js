@@ -418,6 +418,10 @@ class YogaNode {
     this.children[childIndex] = undefined;
     this._node.removeChild(child._node);
   }
+
+  free() {
+    this._node.free();
+  }
 }
 
 export default YogaNode;
