@@ -4,6 +4,10 @@ import commonjs from "rollup-plugin-commonjs";
 
 export default {
   entry: "src/index.js",
+  onwarn: (warning, next) => {
+    if (["THIS_IS_UNDEFINED", "EVAL"].includes(warning.code)) return;
+    next(warning);
+  },
   plugins: [
     alias({
       "yoga-layout": "./Yoga.bundle.js",
