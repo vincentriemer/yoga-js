@@ -6,9 +6,6 @@
   "license": "MIT",
   "main": "dist/yogajs.cjs.js",
   "module": "dist/yogajs.js",
-  "peerDependencies": {
-    "yoga-layout": "^1.2.0"
-  },
   "release": {
     "branch": "develop"
   },
@@ -17,6 +14,7 @@
   },
   "devDependencies": {
     "babel-core": "^6.24.1",
+    "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-syntax-flow": "^6.18.0",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
@@ -31,7 +29,9 @@
     "npm-run-all": "^4.0.2",
     "rimraf": "^2.6.1",
     "rollup": "^0.41.6",
+    "rollup-plugin-alias": "^1.3.1",
     "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-commonjs": "^8.0.2",
     "semantic-release": "^6.3.2",
     "yoga-layout": "^1.2.0"
   },
@@ -49,6 +49,9 @@
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "babel": {
+    "ignore": [
+      "./src/Yoga.bundle.js"
+    ],
     "presets": [
       [
         "env",
@@ -61,10 +64,14 @@
       "syntax-flow",
       "transform-flow-strip-types",
       "transform-class-properties",
-      "transform-object-rest-spread"
+      "transform-object-rest-spread",
+      "external-helpers"
     ],
     "env": {
       "test": {
+        "ignore": [
+          "./src/Yoga.bundle.js"
+        ],
         "presets": [
           "env"
         ],
@@ -72,7 +79,8 @@
           "syntax-flow",
           "transform-flow-strip-types",
           "transform-class-properties",
-          "transform-object-rest-spread"
+          "transform-object-rest-spread",
+          "external-helpers"
         ]
       }
     }

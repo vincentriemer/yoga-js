@@ -1,5 +1,5 @@
 /* @flow */
-import Yoga from "yoga-layout";
+import * as Yoga from "yoga-layout";
 
 type NodeStyle = {
   left?: YGLiteralValue,
