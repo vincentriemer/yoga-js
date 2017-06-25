@@ -419,8 +419,24 @@ class YogaNode {
     this._node.removeChild(child._node);
   }
 
+  getChildCount(): number {
+    return this._node.getChildCount();
+  }
+
+  getParent(): YGNode {
+    return this._node.getParent();
+  }
+
+  getChild(index: number): YGNode {
+    return this._node.getChild(index);
+  }
+
   free() {
     this._node.free();
+  }
+
+  freeRecursive() {
+    this._node.freeRecursive();
   }
 }
 

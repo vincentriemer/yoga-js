@@ -126,6 +126,7 @@ declare class YGNode {
 
   // tree hierarchy inspectors
   getChildCount(): number,
+  getParent(): YGNode,
   getChild(index: number): YGNode,
 }
 
