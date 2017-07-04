@@ -48,35 +48,6 @@
     "prebuild": "yarn run clean",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
-  "babel": {
-    "presets": [
-      [
-        "es2015",
-        {
-          "modules": false
-        }
-      ]
-    ],
-    "plugins": [
-      "syntax-flow",
-      "transform-flow-strip-types",
-      "transform-class-properties",
-      "transform-object-rest-spread"
-    ],
-    "env": {
-      "test": {
-        "presets": [
-          "env"
-        ],
-        "plugins": [
-          "syntax-flow",
-          "transform-flow-strip-types",
-          "transform-class-properties",
-          "transform-object-rest-spread"
-        ]
-      }
-    }
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/vincentriemer/yoga-js.git"
