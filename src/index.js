@@ -36,6 +36,11 @@ type SetterMap = {
 
 type NodeEdgeSetter = (edge: YGEnum, value: YGLiteralValue) => void;
 
+export const MEASURE_MODE_EXACTLY = Yoga.MEASURE_MODE_EXACTLY;
+export const MEASURE_MODE_UNDEFINED = Yoga.MEASURE_MODE_UNDEFINED;
+export const MEASURE_MODE_COUNT = Yoga.MEASURE_MODE_COUNT;
+export const MEASURE_MODE_AT_MOST = Yoga.MEASURE_MODE_AT_MOST;
+
 const BASE_NODE = Yoga.Node.create();
 
 const positionEdgeMapping: EnumMapping = {
@@ -437,6 +442,22 @@ class YogaNode {
 
   freeRecursive() {
     this._node.freeRecursive();
+  }
+
+  setMeasureFunc(func: YGMeasureFunc) {
+    this._node.setMeasureFunc(func);
+  }
+
+  unsetMeasureFunc() {
+    this._node.unsetMeasureFunc();
+  }
+
+  markDirty() {
+    this._node.markDirty();
+  }
+
+  isDirty() {
+    return this._node.isDirty();
   }
 }
 

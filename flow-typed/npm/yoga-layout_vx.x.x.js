@@ -34,6 +34,9 @@ declare type YGLayoutResult = {
   height: number,
 };
 
+declare type YGMeasureFuncResult = { width: number, height: number };
+declare type YGMeasureFunc = (width: number, widthMeasureMode: number, height: number, heightMeasureMode: number) => YGMeasureFuncResult;
+
 declare class YGNode {
   // patched prototype functions ================================
   free(): void,
@@ -128,6 +131,14 @@ declare class YGNode {
   getChildCount(): number,
   getParent(): YGNode,
   getChild(index: number): YGNode,
+
+  // measure func mutators
+  setMeasureFunc(func: YGMeasureFunc): void,
+  unsetMeasureFunc(): void,
+
+  // Dirtiness accessors
+  markDirty(): void,
+  isDirty(): boolean
 }
 
 declare module "yoga-layout" {
