@@ -5,7 +5,7 @@ export default {
   external: ["yoga-layout"],
   onwarn: (warning, next) => {
     if (["THIS_IS_UNDEFINED", "EVAL"].indexOf(warning.code) !== -1) return;
-    next(warning);
+    console.error(warning.message);
   },
   plugins: [
     babel({

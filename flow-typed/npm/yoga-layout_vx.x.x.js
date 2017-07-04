@@ -41,7 +41,6 @@ declare class YGNode {
   // patched prototype functions ================================
   free(): void,
   freeRecursive(): void,
-  setMeasureFunc(measureFunc?: Function): void,
   calculateLayout(
     width?: YGLiteralValue,
     height?: YGLiteralValue,
