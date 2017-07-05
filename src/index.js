@@ -118,6 +118,11 @@ const displayEnumMapping: EnumMapping = {
   none: Yoga.DISPLAY_NONE,
 };
 
+const positionTypeEnumMapping: EnumMapping = {
+  relative: Yoga.POSITION_TYPE_RELATIVE,
+  absolute: Yoga.POSITION_TYPE_ABSOLUTE
+};
+
 function checkMappingValue(mapping: EnumMapping, value: mixed) {
   if (!mapping.hasOwnProperty(value)) {
     throw new Error("invalid value");
@@ -274,11 +279,13 @@ const styleSetterMap = {
 
   ...edgeSetters(borderEdgeMapping, "setBorder"),
   borderWidth: (node: YGNode, ...args) =>
-    shorthandSetter(node, ...args, node.setBorder.bind(this)),
+    shorthandSetter(node, ...args, node.setBorder.bind(node)),
 
   ...edgeSetters(paddingEdgeMapping, "setPadding"),
   padding: (node: YGNode, ...args) =>
     shorthandSetter(node, ...args, node.setPadding.bind(node)),
+
+  position: enumSetter(positionTypeEnumMapping, "setPositionType")
 };
 
 const STYLE_PROPS = Object.keys(styleSetterMap);
