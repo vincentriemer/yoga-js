@@ -36,6 +36,11 @@ type SetterMap = {
 
 type NodeEdgeSetter = (edge: YGEnum, value: YGLiteralValue) => void;
 
+export const MEASURE_MODE_EXACTLY = Yoga.MEASURE_MODE_EXACTLY;
+export const MEASURE_MODE_UNDEFINED = Yoga.MEASURE_MODE_UNDEFINED;
+export const MEASURE_MODE_COUNT = Yoga.MEASURE_MODE_COUNT;
+export const MEASURE_MODE_AT_MOST = Yoga.MEASURE_MODE_AT_MOST;
+
 const BASE_NODE = Yoga.Node.create();
 
 const positionEdgeMapping: EnumMapping = {
@@ -61,6 +66,13 @@ const paddingEdgeMapping: EnumMapping = {
   paddingRight: Yoga.EDGE_RIGHT,
   paddingTop: Yoga.EDGE_TOP,
   paddingVertical: Yoga.EDGE_VERTICAL,
+};
+
+const borderEdgeMapping: EnumMapping = {
+  borderBottomWdith: Yoga.EDGE_BOTTOM,
+  borderLeftWidth: Yoga.EDGE_LEFT,
+  borderRightWidth: Yoga.EDGE_RIGHT,
+  borderTopWidth: Yoga.EDGE_TOP,
 };
 
 const alignEnumMapping: EnumMapping = {
@@ -106,7 +118,12 @@ const displayEnumMapping: EnumMapping = {
   none: Yoga.DISPLAY_NONE,
 };
 
-function checkMappingValue(mapping: EnumMapping, value: any) {
+const positionTypeEnumMapping: EnumMapping = {
+  relative: Yoga.POSITION_TYPE_RELATIVE,
+  absolute: Yoga.POSITION_TYPE_ABSOLUTE
+};
+
+function checkMappingValue(mapping: EnumMapping, value: mixed) {
   if (!mapping.hasOwnProperty(value)) {
     throw new Error("invalid value");
   }
@@ -118,7 +135,7 @@ function shorthandSetter(
   node: YGNode,
   target: NodeStyle,
   property: string,
-  value: any,
+  value: YGLiteralValue,
   nodeEdgeSetter: NodeEdgeSetter
 ) {
   if (typeof value === "string") {
@@ -160,7 +177,12 @@ function edgeSetters(edgeMapping: EnumMapping, nodeEdgeSetter: string) {
   return Object.keys(edgeMapping).reduce(
     (prev, propName) => ({
       ...prev,
-      [propName]: (node, target, property, value) => {
+      [propName]: (
+        node: YGNode,
+        target: NodeStyle,
+        property: string,
+        value: YGLiteralValue
+      ) => {
         const edge = edgeMapping[property];
         return setterBase(
           node,
@@ -177,7 +199,14 @@ function edgeSetters(edgeMapping: EnumMapping, nodeEdgeSetter: string) {
   );
 }
 
-function setterBase(node, target, property, value, setterName, ...setterArgs) {
+function setterBase(
+  node: YGNode,
+  target,
+  property,
+  value,
+  setterName,
+  ...setterArgs
+) {
   const nodeSetter = (node: { [key: string]: ?Function })[setterName];
   if (typeof nodeSetter === "function") {
     nodeSetter.call(node, ...setterArgs);
@@ -188,12 +217,16 @@ function setterBase(node, target, property, value, setterName, ...setterArgs) {
 }
 
 function valueSetter(setterName) {
-  return (node: YGNode, target: NodeStyle, property: string, value: any) =>
-    setterBase(node, target, property, value, setterName, value);
+  return (
+    node: YGNode,
+    target: NodeStyle,
+    property: string,
+    value: YGLiteralValue
+  ) => setterBase(node, target, property, value, setterName, value);
 }
 
 function enumSetter(enumMapping: EnumMapping, setterName: string) {
-  return (node: YGNode, target: NodeStyle, property: string, value: any) => {
+  return (node: YGNode, target: NodeStyle, property: string, value: string) => {
     checkMappingValue(enumMapping, value);
     return setterBase(
       node,
@@ -224,11 +257,16 @@ const styleSetterMap = {
   justifyContent: enumSetter(justifyContentEnumMapping, "setJustifyContent"),
 
   ...edgeSetters(marginEdgeMapping, "setMargin"),
-  margin: (node, ...args) =>
+  margin: (node: YGNode, ...args) =>
     shorthandSetter(node, ...args, node.setMargin.bind(node)),
 
   overflow: enumSetter(overflowEnumMapping, "setOverflow"),
   display: enumSetter(displayEnumMapping, "setDisplay"),
+
+  flex: valueSetter("setFlex"),
+  flexBasis: valueSetter("setFlexBasis"),
+  flexGrow: valueSetter("setFlexGrow"),
+  flexShrink: valueSetter("setFlexShrink"),
 
   width: valueSetter("setWidth"),
   height: valueSetter("setHeight"),
@@ -239,9 +277,15 @@ const styleSetterMap = {
   maxWidth: valueSetter("setMaxHeight"),
   maxHeight: valueSetter("setMaxHeight"),
 
+  ...edgeSetters(borderEdgeMapping, "setBorder"),
+  borderWidth: (node: YGNode, ...args) =>
+    shorthandSetter(node, ...args, node.setBorder.bind(node)),
+
   ...edgeSetters(paddingEdgeMapping, "setPadding"),
-  padding: (node, ...args) =>
+  padding: (node: YGNode, ...args) =>
     shorthandSetter(node, ...args, node.setPadding.bind(node)),
+
+  position: enumSetter(positionTypeEnumMapping, "setPositionType")
 };
 
 const STYLE_PROPS = Object.keys(styleSetterMap);
@@ -268,12 +312,13 @@ class YogaNode {
   _node: YGNode;
   style: NodeStyle;
   +layout: YGLayoutResult;
-  children: YogaNode[];
+  children: Array<?YogaNode>;
 
   constructor() {
     this._node = Yoga.Node.create();
 
-    this.children = Object.freeze([]);
+    // this.children = Object.freeze([]);
+    this.children = [];
     this.style = new Proxy({}, styleHandlerFactory(this._node));
 
     // return proxied instance
@@ -378,6 +423,48 @@ class YogaNode {
   insertChild(child: YogaNode, index: number) {
     this.children[index] = child;
     this._node.insertChild(child._node, index);
+  }
+
+  removeChild(child: YogaNode) {
+    const childIndex = this.children.indexOf(child);
+    this.children[childIndex] = undefined;
+    this._node.removeChild(child._node);
+  }
+
+  getChildCount(): number {
+    return this._node.getChildCount();
+  }
+
+  getParent(): YGNode {
+    return this._node.getParent();
+  }
+
+  getChild(index: number): YGNode {
+    return this._node.getChild(index);
+  }
+
+  free() {
+    this._node.free();
+  }
+
+  freeRecursive() {
+    this._node.freeRecursive();
+  }
+
+  setMeasureFunc(func: YGMeasureFunc) {
+    this._node.setMeasureFunc(func);
+  }
+
+  unsetMeasureFunc() {
+    this._node.unsetMeasureFunc();
+  }
+
+  markDirty() {
+    this._node.markDirty();
+  }
+
+  isDirty() {
+    return this._node.isDirty();
   }
 }
 
