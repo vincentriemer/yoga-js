@@ -1,19 +1,28 @@
 /* @flow */
 import Yoga from "yoga-layout";
 
+/**
+ * Value that can generally be represented as either a number, a unit suffixed string (i.e. "10px"), 
+ * or in some cases a keyword (i.e. "auto") 
+ */
+declare type YGLiteralValue = string | number;
+
+/**
+ * Layout related style properties used to calculate layout.
+ */
 type NodeStyle = {
   left?: YGLiteralValue,
   right?: YGLiteralValue,
   top?: YGLiteralValue,
   bottom?: YGLiteralValue,
-  width?: YGLiteralValue,
-  height?: YGLiteralValue,
+
   alignContent?: string,
   alignItems?: string,
   alignSelf?: string,
   flexDirection?: string,
   flexWrap?: string,
   justifyContent?: string,
+
   margin?: YGLiteralValue,
   marginBottom?: YGLiteralValue,
   marginHorizontal?: YGLiteralValue,
@@ -21,6 +30,53 @@ type NodeStyle = {
   marginRight?: YGLiteralValue,
   marginTop?: YGLiteralValue,
   marginVertical?: YGLiteralValue,
+
+  overflow?: string,
+  display?: string,
+
+  flex?: number,
+  flexBasis?: number,
+  flexGrow?: number,
+  flexShrink?: number,
+
+  width?: YGLiteralValue,
+  height?: YGLiteralValue,
+
+  minWidth?: YGLiteralValue,
+  minHeight?: YGLiteralValue,
+
+  maxWidth?: YGLiteralValue,
+  maxHeight?: YGLiteralValue,
+
+  borderWidth?: YGLiteralValue,
+  borderWidthBottom?: YGLiteralValue,
+  borderWidthHorizontal?: YGLiteralValue,
+  borderWidthLeft?: YGLiteralValue,
+  borderWidthRight?: YGLiteralValue,
+  borderWidthTop?: YGLiteralValue,
+  borderWidthVertical?: YGLiteralValue,
+
+  padding?: YGLiteralValue,
+  paddingBottom?: YGLiteralValue,
+  paddingHorizontal?: YGLiteralValue,
+  paddingLeft?: YGLiteralValue,
+  paddingRight?: YGLiteralValue,
+  paddingTop?: YGLiteralValue,
+  paddingVertical?: YGLiteralValue,
+
+  position?: string
+};
+
+/**
+ * Calculated layout from style properties
+ */
+type YGLayoutResult = {
+  left?: number,
+  right?: number,
+  top?: number,
+  bottom?: number,
+  width?: number,
+  height?: number
 };
 
 type EnumMapping = { [string]: number };
@@ -31,7 +87,7 @@ type SetterMap = {
     target: NodeStyle,
     property: string,
     value: any
-  ) => boolean,
+  ) => boolean
 };
 
 type NodeEdgeSetter = (edge: YGEnum, value: YGLiteralValue) => void;
@@ -47,7 +103,7 @@ const positionEdgeMapping: EnumMapping = {
   left: Yoga.EDGE_LEFT,
   right: Yoga.EDGE_RIGHT,
   top: Yoga.EDGE_TOP,
-  bottom: Yoga.EDGE_BOTTOM,
+  bottom: Yoga.EDGE_BOTTOM
 };
 
 const marginEdgeMapping: EnumMapping = {
@@ -56,7 +112,7 @@ const marginEdgeMapping: EnumMapping = {
   marginLeft: Yoga.EDGE_LEFT,
   marginRight: Yoga.EDGE_RIGHT,
   marginTop: Yoga.EDGE_TOP,
-  marginVertical: Yoga.EDGE_VERTICAL,
+  marginVertical: Yoga.EDGE_VERTICAL
 };
 
 const paddingEdgeMapping: EnumMapping = {
@@ -65,14 +121,14 @@ const paddingEdgeMapping: EnumMapping = {
   paddingLeft: Yoga.EDGE_LEFT,
   paddingRight: Yoga.EDGE_RIGHT,
   paddingTop: Yoga.EDGE_TOP,
-  paddingVertical: Yoga.EDGE_VERTICAL,
+  paddingVertical: Yoga.EDGE_VERTICAL
 };
 
 const borderEdgeMapping: EnumMapping = {
   borderBottomWdith: Yoga.EDGE_BOTTOM,
   borderLeftWidth: Yoga.EDGE_LEFT,
   borderRightWidth: Yoga.EDGE_RIGHT,
-  borderTopWidth: Yoga.EDGE_TOP,
+  borderTopWidth: Yoga.EDGE_TOP
 };
 
 const alignEnumMapping: EnumMapping = {
@@ -83,20 +139,20 @@ const alignEnumMapping: EnumMapping = {
   stretch: Yoga.ALIGN_STRETCH,
   baseline: Yoga.ALIGN_BASELINE,
   "space-between": Yoga.ALIGN_SPACE_BETWEEN,
-  "space-around": Yoga.ALIGN_SPACE_AROUND,
+  "space-around": Yoga.ALIGN_SPACE_AROUND
 };
 
 const flexDirectionEnumMapping: EnumMapping = {
   column: Yoga.FLEX_DIRECTION_COLUMN,
   "column-reverse": Yoga.FLEX_DIRECTION_COLUMN_REVERSE,
   row: Yoga.FLEX_DIRECTION_ROW,
-  "row-reverse": Yoga.FLEX_DIRECTION_ROW_REVERSE,
+  "row-reverse": Yoga.FLEX_DIRECTION_ROW_REVERSE
 };
 
 const flexWrapEnumMapping: EnumMapping = {
   "no-wrap": Yoga.WRAP_NO_WRAP,
   wrap: Yoga.WRAP_WRAP,
-  "wrap-reverse": Yoga.WRAP_WRAP_REVERSE,
+  "wrap-reverse": Yoga.WRAP_WRAP_REVERSE
 };
 
 const justifyContentEnumMapping: EnumMapping = {
@@ -104,18 +160,18 @@ const justifyContentEnumMapping: EnumMapping = {
   center: Yoga.JUSTIFY_CENTER,
   "flex-end": Yoga.JUSTIFY_FLEX_END,
   "space-between": Yoga.JUSTIFY_SPACE_BETWEEN,
-  "space-around": Yoga.JUSTIFY_SPACE_AROUND,
+  "space-around": Yoga.JUSTIFY_SPACE_AROUND
 };
 
 const overflowEnumMapping: EnumMapping = {
   visible: Yoga.OVERFLOW_VISIBLE,
   hidden: Yoga.OVERFLOW_HIDDEN,
-  scroll: Yoga.OVERFLOW_SCROLL,
+  scroll: Yoga.OVERFLOW_SCROLL
 };
 
 const displayEnumMapping: EnumMapping = {
   flex: Yoga.DISPLAY_FLEX,
-  none: Yoga.DISPLAY_NONE,
+  none: Yoga.DISPLAY_NONE
 };
 
 const positionTypeEnumMapping: EnumMapping = {
@@ -193,7 +249,7 @@ function edgeSetters(edgeMapping: EnumMapping, nodeEdgeSetter: string) {
           edge,
           value
         );
-      },
+      }
     }),
     {}
   );
@@ -304,14 +360,36 @@ function styleHandlerFactory(node: YGNode) {
         return styleSetterMap[property](node, target, property, value);
       }
       return false;
-    },
+    }
   };
 }
 
+/**
+ * Yoga layout node
+ */
 class YogaNode {
+  /**
+   * Private YGNode instance providing the native code to perform layout
+   * @memberof YogaNode
+   * @private
+   */
   _node: YGNode;
+
+  /**
+   * Layout-related style properties which dictate the resulting layout
+   * @memberof YogaNode
+   */
   style: NodeStyle;
+
+  /**
+   * The calculated layout result.
+   * @memberof YogaNode
+   */
   +layout: YGLayoutResult;
+
+  /**
+   * The {@link YogaNode}'s children
+   */
   children: Array<?YogaNode>;
 
   constructor() {
@@ -330,7 +408,7 @@ class YogaNode {
               top,
               left,
               width,
-              height,
+              height
             } = target._node.getComputedLayout();
             return { top, left, width, height };
           }
@@ -404,14 +482,17 @@ class YogaNode {
               top,
               left,
               width,
-              height,
-            },
+              height
+            }
           };
         }
-      },
+      }
     });
   }
 
+  /**
+   * Recalculate the layout
+   */
   calculateLayout(
     width?: YGLiteralValue,
     height?: YGLiteralValue,
@@ -420,50 +501,84 @@ class YogaNode {
     return this._node.calculateLayout(width, height, direction);
   }
 
+  /**
+   * Insert a child at the specified index
+   */
   insertChild(child: YogaNode, index: number) {
     this.children[index] = child;
     this._node.insertChild(child._node, index);
   }
 
+  /**
+   * Remove a child node
+   */
   removeChild(child: YogaNode) {
     const childIndex = this.children.indexOf(child);
     this.children[childIndex] = undefined;
     this._node.removeChild(child._node);
   }
 
+  /**
+   * Get total number of children
+   */
   getChildCount(): number {
     return this._node.getChildCount();
   }
 
+  /**
+   * Get the parent of the node
+   */
   getParent(): YGNode {
     return this._node.getParent();
   }
 
+  /**
+   * Get a child at a given index of a node
+   */
   getChild(index: number): YGNode {
     return this._node.getChild(index);
   }
 
+  /**
+   * Purge the node and it's memory
+   */
   free() {
     this._node.free();
   }
 
+  /**
+   * Pure the node and all it's children recursively.
+   */
   freeRecursive() {
     this._node.freeRecursive();
   }
 
+  /**
+   * Set the measure function used for nodes who's dimensions are determined outside
+   * of Yoga
+   */
   setMeasureFunc(func: YGMeasureFunc) {
     this._node.setMeasureFunc(func);
   }
 
+  /**
+   * Clear the node's measure function
+   */
   unsetMeasureFunc() {
     this._node.unsetMeasureFunc();
   }
 
+  /**
+   * Explicitly mark the node as dirty
+   */
   markDirty() {
     this._node.markDirty();
   }
 
-  isDirty() {
+  /**
+   * Get the dirtiness of the node.
+   */
+  isDirty(): boolean {
     return this._node.isDirty();
   }
 }
