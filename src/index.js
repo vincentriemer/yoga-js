@@ -71,12 +71,12 @@ type NodeStyle = {
  * Calculated layout from style properties
  */
 type YGLayoutResult = {
-  left?: number,
-  right?: number,
-  top?: number,
-  bottom?: number,
-  width?: number,
-  height?: number
+  left: number,
+  right: number,
+  top: number,
+  bottom: number,
+  width: number,
+  height: number
 };
 
 type EnumMapping = { [string]: number };
